@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Lista de Publicaciones </h1>
-    <ul>
-        {% for post in posts %}
+{% extends 'Main/base.html' %}
+
+    { {% block content %}
+
+        <ul>
+            {% for post in posts %}
             <li>{{ post.titulo }} - {{ post.fecha_publicacion}}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+            {% endfor %}
+        </ul>
+    
+    {% endblock content %}}
+
