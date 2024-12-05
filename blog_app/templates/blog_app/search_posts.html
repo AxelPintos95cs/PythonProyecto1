@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="search-container">
+        <h2>Buscar Posts</h2>
+        <form method="get" action="{% url 'search_posts' %}" class="search-form">
+            <div class="form-group">
+                <label for="q">Buscar por título</label>
+                <input type="text" name="q" id="q" value="{{ query }}" placeholder="Buscar por título..." class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="category">Buscar por categoría</label>
+                <select name="category" id="category" class="form-control">
+                    <option value="">-- Seleccionar Categoría --</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="author">Buscar por autor</label>
+                <select name="author" id="author" class="form-control">
+                    <option value="">-- Seleccionar Autor --</option>
+                    {% for auth in authors %}
+                        <option value="{{ auth.name }}" {% if auth.name == author %}selected{% endif %}>{{ auth.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    {% if posts %}
+        <div class="posts-container">
+            <h3>Resultados de la búsqueda</h3>
+            <ul class="post-list">
+                {% for post in posts %}
+                    <li class="post-item">
+                        <h4><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h4>
+                        <p>Por {{ post.author.name }} en {{ post.category.name }}</p>
+                        <p>{{ post.created_at|date:"d M Y" }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>No se encontraron resultados para tu búsqueda.</p>
+    {% endif %}
+{% endblock %}
+

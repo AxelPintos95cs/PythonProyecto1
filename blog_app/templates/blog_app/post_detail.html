@@ -1,0 +1,8 @@
+{% extends 'blog_app/base.html' %}
+
+{% block content %}
+    <h2>{{ post.title }}</h2>
+    <p><strong>Publicado en:</strong> {{ post.created_at|date:"d M Y" }}</p>
+    <p>{{ post.content }}</p>
+    <a href="{% url 'home' %}">Volver a la página principal</a>
+{% endblock %}
