@@ -4,7 +4,7 @@ from .models import Author, Category, Post
 class AuthorForm(forms.ModelForm):
     class Meta:
         model = Author
-        fields = ['name', 'email']
+        fields = ['name']
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -14,5 +14,5 @@ class CategoryForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['title', 'content', 'category']
 

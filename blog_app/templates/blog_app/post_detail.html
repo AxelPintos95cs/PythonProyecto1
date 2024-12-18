@@ -4,7 +4,13 @@
   <h1>{{ post.title }}</h1>
   <p>{{ post.content }}</p>
   <p><strong>Autor:</strong> {{ post.author.username }}</p>
-  
+  <div>
+        <form action="{% url 'like_post' post.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" id="like-button">👍</button>
+        </form>
+        <span>Likes: {{ like_count }}</span>  <!-- Mostrar el número de likes -->
+    </div>
   <div class="btn-group">
     <a href="{% url 'home' %}" class="btn btn-primary">Volver a la página principal</a>
     {% if post.author == user %}

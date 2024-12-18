@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import AuthorForm, CategoryForm, PostForm
-from .models import Post
+from .forms import CategoryForm, PostForm
+from .models import Post, Like
 from blog_app.models import Post, Category, Author
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
@@ -14,7 +14,8 @@ def home(request):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    return render(request, 'blog_app/post_detail.html', {'post': post, 'user': request.user})
+    like_count = Like.objects.filter(post=post).count()  # Contamos los likes
+    return render(request, 'blog_app/post_detail.html', {'post': post, 'user': request.user, 'like_count': like_count})
 
 def create_user(request):
     if request.method == 'POST':
@@ -123,4 +124,15 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
+@login_required
 
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Verifica si el usuario ya le dio like al post
+    if not Like.objects.filter(user=request.user, post=post).exists():
+        # Si no, crea un nuevo like
+        Like.objects.create(user=request.user, post=post)
+
+    # Después de crear el "like", redirige al detalle del post
+    return redirect('post_detail', post_id=post.id)
