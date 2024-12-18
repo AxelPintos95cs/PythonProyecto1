@@ -1,0 +1,15 @@
+{% extends 'blog_app/base.html' %}
+
+{% block content %}
+  <h1>¿Está seguro que desea eliminar este post?</h1>
+  <p><strong>{{ post.title }}</strong></p>
+
+  <div class="btn-group">
+    <form method="POST" action="{% url 'delete_post' post.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    </form>
+    <a href="{% url 'home' %}" class="btn btn-secondary">No, volver</a>
+  </div>
+  
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'blog_app/base.html' %}
+
+{% block content %}
+    <h2>Página Principal</h2>
+    <p>Aquí puedes ver los posts más recientes.</p>
+
+    {% if posts %}
+        <div class="recent-posts">
+            <h3>Posts Recientes</h3>
+            <ul>
+                {% for post in posts %}
+                    <li>
+                        <strong>{{ post.title }}</strong> - 
+                        <span>{{ post.created_at|date:"d M Y" }}</span>
+                        <p>{{ post.content|slice:":100" }}...</p> 
+                        <a href="{% url 'post_detail' post.id %}">Leer más</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>No hay posts aún.</p>
+    {% endif %}
+{% endblock %}
