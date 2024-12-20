@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 
 def home(request):
     posts = Post.objects.all().order_by('-created_at')[:5]  
@@ -15,8 +16,8 @@ def home(request):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    like_count = Like.objects.filter(post=post).count()
-    comments = post.comments.all()  # Aseguramos que estamos obteniendo todos los comentarios asociados al post
+    like_count = post.like_count()
+    comments = post.comments.all()  
     new_comment = None
 
     if request.method == 'POST':
@@ -24,7 +25,7 @@ def post_detail(request, post_id):
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
             new_comment.post = post
-            new_comment.author = request.user  # Aseguramos que el comentario tiene al autor correcto
+            new_comment.author = request.user  
             new_comment.save()
             return redirect('post_detail', post_id=post.id)
     else:
@@ -33,7 +34,7 @@ def post_detail(request, post_id):
     return render(request, 'blog_app/post_detail.html', {
         'post': post,
         'like_count': like_count,
-        'comments': comments,  # Pasamos los comentarios para el template
+        'comments': comments,  
         'new_comment': new_comment,
         'comment_form': comment_form,
     })
@@ -67,18 +68,22 @@ def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('home')
+            # Crea el post, asigna el autor y guarda el post
+            post = form.save(commit=False)
+            post.author = request.user  # Asigna el autor como el usuario actual
+            post.save()
+            return redirect('post_list')  # Redirige a la lista de posts después de guardar el post
     else:
         form = PostForm()
+
     return render(request, 'blog_app/create_post.html', {'form': form})
 
 def search_posts(request):
     query = request.GET.get('q', '')  
     category = request.GET.get('category', '')  
-    author_id = request.GET.get('author', '')  # Cambié 'author' por 'author_id'
+    author_id = request.GET.get('author', '')  
 
-    posts = Post.objects.all()  # Comienza con todos los posts
+    posts = Post.objects.all()  
 
     # Filtra por título si hay una consulta de búsqueda
     if query:
@@ -93,13 +98,13 @@ def search_posts(request):
         posts = posts.filter(author__id=author_id)
 
     # Obtiene los autores registrados que tienen al menos un post
-    authors = User.objects.filter(posts__isnull=False).distinct()
+    authors = User.objects.filter(post__isnull=False).distinct()
 
     # Si se selecciona un autor, se comprueba si tiene posts
     selected_author = None
     if author_id:
         selected_author = User.objects.get(id=author_id)
-        if not selected_author.posts.exists():
+        if not selected_author.post_set.exists():  # Cambié `posts` por `post_set` que es el nombre de la relación inversa
             posts = []  # Si no tiene posts, dejamos la lista de posts vacía
 
     # Si no hay posts después de la búsqueda, muestra el mensaje correspondiente
@@ -122,9 +127,15 @@ def search_posts(request):
     })
 
 
+
+
 def user_list(request):
-    users = User.objects.annotate(post_count=Count('posts'))
-    return render(request, 'blog_app/user_list.html', {'users': users})
+    users = User.objects.filter(post__isnull=False).distinct()
+    
+    return render(request, 'blog_app/user_list.html', {
+        'users': users,
+    })
+
 
 def about(request):
     return render(request, 'blog_app/about.html')
@@ -170,17 +181,21 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-@login_required
 
+@login_required
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    
 
-    if not Like.objects.filter(user=request.user, post=post).exists():
-        # Si no, crea un nuevo like
-        Like.objects.create(user=request.user, post=post)
+    if request.user in post.likes.all():
+        # Si el usuario ya ha dado like, lo quitamos
+        post.likes.remove(request.user)
+        messages = "Ya no te gusta este post."
+    else:
+        # Si el usuario no ha dado like, lo agregamos
+        post.likes.add(request.user)
+        messages = "Te gusta este post."
 
-    # Después de crear el "like", redirige al detalle del post
+    # Redirigimos de vuelta al detalle del post
     return redirect('post_detail', post_id=post.id)
 
 @login_required

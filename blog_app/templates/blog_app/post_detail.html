@@ -13,7 +13,7 @@
 
         <!-- Botón de Likes -->
         <div class="like-section my-4">
-          <form action="{% url 'like_post' post.id %}" method="post">
+          <form method="post" action="{% url 'like_post' post.id %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-outline-primary">
               👍 Like
@@ -21,6 +21,15 @@
           </form>
           <span class="ml-3">Likes: {{ like_count }}</span>
         </div>
+        {% if messages %}
+          <div class="messages">
+              {% for message in messages %}
+                  <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-danger{% endif %}">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          </div>
+        {% endif %}
 
         <!-- Comentarios -->
         <h2 class="my-4">Comentarios</h2>

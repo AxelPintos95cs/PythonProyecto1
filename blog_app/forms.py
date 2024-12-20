@@ -17,7 +17,7 @@ class CategoryForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'content', 'category']
+        fields = ['title', 'content', 'category', 'author']
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -57,6 +57,12 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Escribe tu comentario aquí...'}),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control w-100',  # Clase de Bootstrap para ancho completo
+                'rows': 3,
+                'placeholder': 'Escribe tu comentario aquí...',
+            }),
         }
-            
+        labels = {
+            'content': '',  # Eliminar etiqueta
+        }
