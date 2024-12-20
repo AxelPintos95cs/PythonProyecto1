@@ -1,23 +1,51 @@
 {% extends 'blog_app/base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-<h2>Mi Cuenta</h2>
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Mi Cuenta</h2>
 
-<form method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend>Actualizar Información</legend>
-        {{ profile_form.as_p }}
-        <button type="submit">Guardar Cambios</button>
-    </fieldset>
-</form>
+    <!-- Contenedor de los formularios en una fila -->
+    <div class="d-flex justify-content-between">
+      
+      <!-- Formulario de actualización de información -->
+      <form method="post" class="w-45">
+        {% csrf_token %}
+        <fieldset class="border p-4 rounded">
+          <legend class="w-auto px-2">Actualizar Información</legend>
+          
+          <!-- Campos del formulario alineados a la izquierda -->
+          <div class="mb-3">
+            {{ profile_form.as_p }}
+          </div>
+          
+          <div class="text-left">
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </div>
+        </fieldset>
+      </form>
 
-<form method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend>Cambiar Contraseña</legend>
-        {{ password_form.as_p }}
-        <button type="submit">Cambiar Contraseña</button>
-    </fieldset>
-</form>
+      <!-- Formulario para cambiar la contraseña -->
+      <form method="post" class="w-45">
+        {% csrf_token %}
+        <fieldset class="border p-4 rounded">
+          <legend class="w-auto px-2">Cambiar Contraseña</legend>
+          
+          <!-- Campos del formulario alineados a la izquierda -->
+          <div class="mb-3">
+            {{ password_form.as_p }}
+          </div>
+          
+          <div class="text-left">
+            <button type="submit" class="btn btn-danger">Cambiar Contraseña</button>
+          </div>
+        </fieldset>
+      </form>
+
+    </div>
+  </div>
 {% endblock %}
+
+
+
+

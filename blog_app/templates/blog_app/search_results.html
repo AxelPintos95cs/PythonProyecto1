@@ -5,30 +5,37 @@
 
     <form method="get" action="{% url 'search_posts' %}">
         <input type="text" name="q" value="{{ query }}" placeholder="Buscar por título...">
+        
+        <!-- Filtro por categoría -->
         <select name="category">
             <option value="">-- Seleccionar Categoría --</option>
             {% for cat in categories %}
                 <option value="{{ cat.name }}" {% if cat.name == category %}selected{% endif %}>{{ cat.name }}</option>
             {% endfor %}
         </select>
+
+        <!-- Filtro por autor -->
         <select name="author">
             <option value="">-- Seleccionar Autor --</option>
             {% for auth in authors %}
-                <option value="{{ auth.name }}" {% if auth.name == author %}selected{% endif %}>{{ auth.name }}</option>
+                <option value="{{ auth.id }}" {% if auth.id == author_id %}selected{% endif %}>{{ auth.username }}</option>
             {% endfor %}
         </select>
+
         <button type="submit">Buscar</button>
     </form>
 
     <h2>Resultados de la búsqueda</h2>
 
-    {% if posts %}
+    {% if no_posts_message %}
+        <p>{{ no_posts_message }}</p>  <!-- Mostrar mensaje si no hay posts del autor -->
+    {% elif posts %}
         <ul>
             {% for post in posts %}
                 <li>
                     <h3><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h3>
                     <p>{{ post.content|slice:":100" }}...</p>
-                    <p><strong>Autor:</strong> {{ post.author.name }}</p>
+                    <p><strong>Autor:</strong> {{ post.author.username }}</p>  <!-- Mostrar nombre de usuario del autor -->
                 </li>
             {% endfor %}
         </ul>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'blog_app/base.html' %}
 
 {% block content %}
     <div class="search-container">
@@ -21,8 +21,8 @@
                 <label for="author">Buscar por autor</label>
                 <select name="author" id="author" class="form-control">
                     <option value="">-- Seleccionar Autor --</option>
-                    {% for auth in authors %}
-                        <option value="{{ auth.name }}" {% if auth.name == author %}selected{% endif %}>{{ auth.name }}</option>
+                    {% for user in users %}
+                        <option value="{{ user.username }}" {% if user.username == author %}selected{% endif %}>{{ user.username }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -39,7 +39,7 @@
                 {% for post in posts %}
                     <li class="post-item">
                         <h4><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h4>
-                        <p>Por {{ post.author.name }} en {{ post.category.name }}</p>
+                        <p>Por {{ post.author.username }} en {{ post.category.name }}</p>
                         <p>{{ post.created_at|date:"d M Y" }}</p>
                     </li>
                 {% endfor %}

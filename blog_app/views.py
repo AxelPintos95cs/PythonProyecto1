@@ -15,30 +15,30 @@ def home(request):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    like_count = Like.objects.filter(post=post).count()  # Contamos los likes
-    comments = post.comments.all()  
+    like_count = Like.objects.filter(post=post).count()
+    comments = post.comments.all()  # Aseguramos que estamos obteniendo todos los comentarios asociados al post
     new_comment = None
 
-    
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
             new_comment.post = post
-            new_comment.user = request.user
+            new_comment.author = request.user  # Aseguramos que el comentario tiene al autor correcto
             new_comment.save()
             return redirect('post_detail', post_id=post.id)
     else:
         comment_form = CommentForm()
 
-    
     return render(request, 'blog_app/post_detail.html', {
         'post': post,
         'like_count': like_count,
-        'comments': comments,
+        'comments': comments,  # Pasamos los comentarios para el template
         'new_comment': new_comment,
-        'comment_form': comment_form,  
+        'comment_form': comment_form,
     })
+
+
 
 
 def create_user(request):
@@ -76,29 +76,51 @@ def create_post(request):
 def search_posts(request):
     query = request.GET.get('q', '')  
     category = request.GET.get('category', '')  
-    author = request.GET.get('author', '') 
-    
-    
-    posts = Post.objects.all()
-    
-    if query:
-        posts = posts.filter(title__icontains=query)  
-    if category:
-        posts = posts.filter(category__name__icontains=category)  
-    if author:
-        posts = posts.filter(author__name__icontains=author)  
+    author_id = request.GET.get('author', '')  # Cambié 'author' por 'author_id'
 
-    categories = Category.objects.all()  
-    authors = Author.objects.all() 
+    posts = Post.objects.all()  # Comienza con todos los posts
+
+    # Filtra por título si hay una consulta de búsqueda
+    if query:
+        posts = posts.filter(title__icontains=query)
+    
+    # Filtra por categoría si hay una categoría seleccionada
+    if category:
+        posts = posts.filter(category__name__icontains=category)
+
+    # Filtra por autor si hay un autor seleccionado
+    if author_id:
+        posts = posts.filter(author__id=author_id)
+
+    # Obtiene los autores registrados que tienen al menos un post
+    authors = User.objects.filter(posts__isnull=False).distinct()
+
+    # Si se selecciona un autor, se comprueba si tiene posts
+    selected_author = None
+    if author_id:
+        selected_author = User.objects.get(id=author_id)
+        if not selected_author.posts.exists():
+            posts = []  # Si no tiene posts, dejamos la lista de posts vacía
+
+    # Si no hay posts después de la búsqueda, muestra el mensaje correspondiente
+    no_posts_message = None
+    if author_id and not posts:
+        no_posts_message = "Este usuario aún no ha realizado ningún post."
+
+    # Obtener todas las categorías para el filtro
+    categories = Category.objects.all()
 
     return render(request, 'blog_app/search_results.html', {
         'posts': posts,
-        'categories': categories,
         'authors': authors,
+        'categories': categories,
         'query': query,
         'category': category,
-        'author': author,
+        'author_id': author_id,
+        'selected_author': selected_author,
+        'no_posts_message': no_posts_message,  # Pasamos el mensaje
     })
+
 
 def user_list(request):
     users = User.objects.annotate(post_count=Count('posts'))

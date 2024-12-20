@@ -1,10 +1,31 @@
 {% extends 'blog_app/base.html' %}
+{% load widget_tweaks %}
 
 {% block content %}
-<h2>Crear Nuevo Post</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar</button>
-</form>
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Crear Nuevo Post</h2>
+
+    <form method="post" class="post-form">
+      {% csrf_token %}
+
+      <!-- Campo Título -->
+      <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+        {{ form.title|add_class:"form-control" }}
+      </div>
+
+      <!-- Campo Contenido -->
+      <div class="mb-3">
+        <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+        {{ form.content|add_class:"form-control" }}
+      </div>
+
+      <!-- Botón de Guardar -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-success">Guardar</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}
+
+

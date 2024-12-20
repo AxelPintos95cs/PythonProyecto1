@@ -1,9 +1,15 @@
 {% extends 'blog_app/base.html' %}
 
 {% block content %}
-    <h2>Sobre esta página</h2>
-    <hr><hr>
-    <h4>Mi nombre es Axel Pintos y cree este blog de noticias para el curso de Python en Coderhouse</h4>
-    <p>En el siguiente blog encontraras noticias de actualidad, deportes, tecnología y mucho más. Cada usuario puede registrarse, crear su perfil y publicar sus noticias.</p>
-    <hr><hr>
+    <div class="container my-5">
+        <h2 class="text-center text-primary mb-4">Sobre esta página</h2>
+        <hr>
+        <h4 class="text-center mb-3">Mi nombre es Axel Pintos y creé este blog de noticias para el curso de Python en Coderhouse</h4>
+        <p class="lead text-center">En el siguiente blog encontrarás noticias de actualidad, deportes, tecnología y mucho más. Cada usuario puede registrarse, crear su perfil y publicar sus noticias.</p>
+        <hr>
+        <div class="text-center">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary">Volver al inicio</a>
+        </div>
+    </div>
 {% endblock %}
+
