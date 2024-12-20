@@ -11,6 +11,30 @@
         </form>
         <span>Likes: {{ like_count }}</span>  <!-- Mostrar el número de likes -->
     </div>
+    <h2>Comentarios</h2>
+    {% for comment in comments %}
+        <div>
+            <strong>{{ comment.user.username }}</strong> dijo:
+            <p>{{ comment.content }}</p>
+            <small>Publicado el {{ comment.created_at }}</small>
+        </div>
+        <hr>
+    {% empty %}
+        <p>No hay comentarios aún. Sé el primero en comentar.</p>
+    {% endfor %}
+    
+    <!-- Formulario para agregar un comentario -->
+    <h3>Deja tu comentario</h3>
+    {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit">Enviar</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Inicia sesión</a> para comentar.</p>
+    {% endif %}
+    
   <div class="btn-group">
     <a href="{% url 'home' %}" class="btn btn-primary">Volver a la página principal</a>
     {% if post.author == user %}

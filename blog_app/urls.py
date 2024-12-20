@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from .views import post_detail
+
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -17,4 +19,5 @@ urlpatterns = [
     path('post/<int:post_id>/delete/', views.delete_post, name='delete_post'),
     path('post/<int:post_id>/like/', views.like_post, name='like_post'),
     path('my_account/', views.my_account, name='my_account'),
+    path('post/<int:pk>/', post_detail, name='post_detail'),
 ]

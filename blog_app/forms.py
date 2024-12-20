@@ -1,5 +1,5 @@
 from django import forms
-from .models import Author, Category, Post, Profile
+from .models import Author, Category, Post, Profile, Comment
 from django.contrib.auth.forms import PasswordChangeForm
 from django.forms.widgets import DateInput
 from datetime import datetime, date
@@ -52,3 +52,11 @@ class ProfileForm(forms.ModelForm):
 class CustomPasswordChangeForm(PasswordChangeForm):
     pass
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Escribe tu comentario aquí...'}),
+        }
+            
