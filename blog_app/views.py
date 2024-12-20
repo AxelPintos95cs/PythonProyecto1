@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import CategoryForm, PostForm
+from .forms import CategoryForm, PostForm, Profile, ProfileForm, CustomPasswordChangeForm
 from .models import Post, Like
 from blog_app.models import Post, Category, Author
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
+from django.contrib.auth import update_session_auth_hash
 
 def home(request):
     posts = Post.objects.all().order_by('-created_at')[:5]  
@@ -129,10 +130,36 @@ def logout_view(request):
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     
-    # Verifica si el usuario ya le dio like al post
+
     if not Like.objects.filter(user=request.user, post=post).exists():
         # Si no, crea un nuevo like
         Like.objects.create(user=request.user, post=post)
 
     # Después de crear el "like", redirige al detalle del post
     return redirect('post_detail', post_id=post.id)
+
+@login_required
+def my_account(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, instance=profile)
+        password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+
+        if profile_form.is_valid():
+            profile_form.save()
+            return redirect('my_account')
+
+        if password_form.is_valid():
+            password_form.save()
+            update_session_auth_hash(request, password_form.user) 
+            return redirect('my_account')
+
+    else:
+        profile_form = ProfileForm(instance=profile)
+        password_form = CustomPasswordChangeForm(user=request.user)
+
+    return render(request, 'blog_app/my_account.html', {
+        'profile_form': profile_form,
+        'password_form': password_form,
+    })

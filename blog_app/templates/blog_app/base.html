@@ -48,6 +48,7 @@
             {% if user.is_authenticated %}
                 <a href="/create_category/">Crear Categoría</a> |
                 <a href="/create_post/">Crear Post</a> |
+                <a href="{% url 'my_account' %}">Mi Cuenta</a> |
                 <a href="/logout/">Cerrar sesión</a> |
             {% else %}
                 <a href="/create_user/">Registrarse</a> |
