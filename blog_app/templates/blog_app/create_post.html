@@ -8,6 +8,19 @@
     <form method="post" class="post-form">
       {% csrf_token %}
 
+      <!-- Mostrar errores del formulario -->
+      {% if form.errors %}
+        <div class="alert alert-danger">
+          <ul>
+            {% for field in form %}
+              {% if field.errors %}
+                <li><strong>{{ field.name }}:</strong> {{ field.errors }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
       <!-- Campo Título -->
       <div class="mb-3">
         <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
@@ -18,6 +31,12 @@
       <div class="mb-3">
         <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
         {{ form.content|add_class:"form-control" }}
+      </div>
+
+      <!-- Campo Categoría -->
+      <div class="mb-3">
+        <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+        {{ form.category|add_class:"form-control" }}
       </div>
 
       <!-- Botón de Guardar -->

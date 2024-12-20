@@ -18,6 +18,15 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'category', 'author']
+        widgets = {
+            'category': forms.Select(attrs={'class': 'form-control'}),  # Asegura que la categoría sea un dropdown
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Elimina la validación del campo author si no quieres que sea obligatorio
+        self.fields['author'].required = False
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:

@@ -68,15 +68,13 @@ def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            # Crea el post, asigna el autor y guarda el post
-            post = form.save(commit=False)
-            post.author = request.user  # Asigna el autor como el usuario actual
-            post.save()
-            return redirect('post_list')  # Redirige a la lista de posts después de guardar el post
+            form.save()
+            return redirect('post_list')  # Redirige a la vista con el nombre 'post_list'
     else:
         form = PostForm()
-
     return render(request, 'blog_app/create_post.html', {'form': form})
+
+
 
 def search_posts(request):
     query = request.GET.get('q', '')  
@@ -223,3 +221,7 @@ def my_account(request):
         'profile_form': profile_form,
         'password_form': password_form,
     })
+
+def post_list(request):
+    posts = Post.objects.all()
+    return render(request, 'blog_app/post_list.html', {'posts': posts})
