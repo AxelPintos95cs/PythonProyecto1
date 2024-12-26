@@ -201,22 +201,23 @@ def like_post(request, post_id):
 def my_account(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
 
+    # Inicializa los formularios
+    profile_form = ProfileForm(instance=profile)
+    password_form = CustomPasswordChangeForm(user=request.user)
+
     if request.method == 'POST':
-        profile_form = ProfileForm(request.POST, instance=profile)
-        password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if 'update_profile' in request.POST:  # Detectar envío del formulario de perfil
+            profile_form = ProfileForm(request.POST, instance=profile)
+            if profile_form.is_valid():
+                profile_form.save()
+                return redirect('my_account')
 
-        if profile_form.is_valid():
-            profile_form.save()
-            return redirect('my_account')
-
-        if password_form.is_valid():
-            password_form.save()
-            update_session_auth_hash(request, password_form.user) 
-            return redirect('my_account')
-
-    else:
-        profile_form = ProfileForm(instance=profile)
-        password_form = CustomPasswordChangeForm(user=request.user)
+        elif 'change_password' in request.POST:  # Detectar envío del formulario de contraseña
+            password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)  # Mantener la sesión activa
+                return redirect('my_account')
 
     return render(request, 'blog_app/my_account.html', {
         'profile_form': profile_form,

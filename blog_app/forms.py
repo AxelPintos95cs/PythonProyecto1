@@ -28,35 +28,44 @@ class PostForm(forms.ModelForm):
         self.fields['author'].required = False
 
 
+class DateInput(forms.DateInput):
+    input_type = 'text'
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'email', 'birth_date']
         widgets = {
             'birth_date': DateInput(format='%d/%m/%Y', attrs={
-                'type': 'text',  
+                'type': 'text',
                 'placeholder': 'dd/mm/yyyy',
             }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['birth_date'].input_formats = ['%d/%m/%Y']    
+        self.fields['birth_date'].input_formats = ['%d/%m/%Y']
 
     def clean_birth_date(self):
         birth_date = self.cleaned_data.get('birth_date')
 
-        
-        if isinstance(birth_date, date):
-            birth_date = birth_date.strftime('%d/%m/%Y')
+        # Si no se proporciona una fecha, devuélvela sin errores
+        if not birth_date:
+            return birth_date
 
-        try:
-            
-            datetime.strptime(birth_date, '%d/%m/%Y')
-        except ValueError:
-            raise forms.ValidationError('El formato de fecha debe ser DD/MM/YYYY.')
-        
-        return self.cleaned_data.get('birth_date')  
+        # Asegúrate de que el formato sea correcto
+        if isinstance(birth_date, date):
+            try:
+                datetime.strptime(birth_date.strftime('%d/%m/%Y'), '%d/%m/%Y')
+            except ValueError:
+                raise forms.ValidationError('El formato de fecha debe ser DD/MM/YYYY.')
+        else:
+            try:
+                datetime.strptime(str(birth_date), '%d/%m/%Y')
+            except ValueError:
+                raise forms.ValidationError('El formato de fecha debe ser DD/MM/YYYY.')
+
+        return birth_date
 
 class CustomPasswordChangeForm(PasswordChangeForm):
     pass
