@@ -11,7 +11,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 
 def home(request):
-    posts = Post.objects.all().order_by('-created_at')[:5]  
+    posts = Post.objects.all()  # Obtiene todos los posts
     return render(request, 'blog_app/home.html', {'posts': posts})
 
 def post_detail(request, post_id):
@@ -39,9 +39,6 @@ def post_detail(request, post_id):
         'comment_form': comment_form,
     })
 
-
-
-
 def create_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -68,8 +65,10 @@ def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('post_list')  # Redirige a la vista con el nombre 'post_list'
+            post = form.save(commit=False)
+            post.author = request.user  # Asigna el autor logeado
+            post.save()
+            return redirect('home')  # Cambiado a 'home'
     else:
         form = PostForm()
     return render(request, 'blog_app/create_post.html', {'form': form})
@@ -125,14 +124,16 @@ def search_posts(request):
     })
 
 
-
-
 def user_list(request):
-    users = User.objects.filter(post__isnull=False).distinct()
-    
-    return render(request, 'blog_app/user_list.html', {
-        'users': users,
-    })
+    users = User.objects.all()
+    user_data = [
+        {
+            'username': user.username,
+            'post_count': user.post_set.count()  # Cuenta los posts asociados al usuario
+        }
+        for user in users
+    ]
+    return render(request, 'blog_app/user_list.html', {'users': user_data})
 
 
 def about(request):
@@ -222,6 +223,3 @@ def my_account(request):
         'password_form': password_form,
     })
 
-def post_list(request):
-    posts = Post.objects.all()
-    return render(request, 'blog_app/post_list.html', {'posts': posts})
