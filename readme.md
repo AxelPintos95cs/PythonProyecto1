@@ -2,22 +2,33 @@
 
 Este proyecto es una aplicación web desarrollada en Django que permite gestionar un blog, crear autores, categorías y posts, además de realizar búsquedas avanzadas por título, categoría o autor.
 
-**En la página principal o home encontrarás las entradas más recientes de este blog.**
+**En la página principal o home encontrarás las entradas de este blog.**
 
 
 ## Cómo usar la aplicación
 
-### Crear autores y categorías:
-Ve a la sección correspondiente desde la barra de navegación y completa los formularios para añadir nuevos autores y categorías.
+### Si no estás logeado:
+Podrás ver los post creados, los autores registrados en la página y la cantidad de posteos que ha realizado cada usuario
 
-### Crear posts:
-Desde la sección "Crear Post", selecciona un autor, una categoría, y completa los campos del formulario.
+### Si creaste una cuenta y estás logeado:
 
-### Buscar posts:
+Crear una categoría:
+Ve a la sección correspondiente desde la barra de navegación y añade una nueva categoría.
+
+Crear posts:
+Desde la sección "Crear Post", completa el formulario con el título, el cuerpo del post y selecciona la categoría deseada.
+
+Mi cuenta:
+En esta pestaña podrás editar tus datos personales y cambiar la contraseña.
+
+Buscar posts:
 Usa la barra de búsqueda avanzada para filtrar posts por título, categoría o autor.
 
-### Ver detalle de un post:
-Haz clic en el título de cualquier post en la página de resultados para ver más detalles.
+### Recuerde instalar requirements.txt para utilizar la aplicación e iniciar el servidor con: 
+
+```bash
+python runserver.py
+```
 
 
-*Proyecto realizado para la Preentrega 3 de Python - Coderhouse*
+*Proyecto realizado para la Entrega Final de Python - Coderhouse*
