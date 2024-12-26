@@ -32,3 +32,8 @@ python runserver.py
 
 
 *Proyecto realizado para la Entrega Final de Python - Coderhouse*
+
+
+TL;DR: Decidí hacer un estilo minimalista de la página centrándome en la funciones de Python y probando que funcione todo. No quise sobrecargarla con imagenes y estilos. Por otro lado, como ya tenía el proyecto creado y bastante avanzado desde la Preentrega 3, seguí agregando los html y me olvidé de generar una app de Accounts para poder separar los html que son referidos al usuario y los demás html por lo que decidí dejarlo así para no tener que modificar medio proyecto. Espero que esté bien de todas formas.
+
+Por otro lado, decidí agregar el sistema de likes que era un extra.
